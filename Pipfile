@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+matplotlib = "*"
+numpy = "*"
+scipy = "*"
+
+[dev-packages]
+black = "==21.4b1"
+flake8 = "*"
+flake8-bugbear = "*"
+isort = "*"
+sympy = "*"
+
+[requires]
+python_version = "3.7"

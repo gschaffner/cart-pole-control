@@ -1,0 +1,198 @@
+\documentclass{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+
+\setlength{\parindent}{0em}
+
+\usepackage{amsmath, amssymb, mathtools}
+\usepackage[arrowdel]{physics}
+\usepackage{cancel}
+
+\newcommand{\Lag}{\mathcal{L}}
+
+\title{Cart-Pole Derivation}
+\date{}
+
+\begin{document}
+    \maketitle
+
+    \tableofcontents
+
+    \section{Equation of Motion}
+
+    Let $x$ denote the cart's position.
+    Let $\theta$ denote the pole angle, measured c.c.w. and with $\theta = 0$ pointing downward.
+
+    Let $M$ denote the cart's mass.
+    Let $m$ denote the pole's mass.
+    Let $P$ be the center of mass the pole, and let $L$ denote the distance between $P$ and the axle connecting the pole to the cart.
+    Let $I_\mathrm{CM}$ denote the pole's moment of inertia about about an axis through its center of mass $P$ and parallel to the axle.
+
+    We will take a Lagrangian approach.
+    The kinetic energy will have three terms: one for the cart's linear motion, one for the linear motion of the pole's CoM, and one for the rotational motion of the pole about its CoM:
+
+    \[
+        T = \frac{1}{2}M\dot{x}^2 + \frac{1}{2}m\dot{\va{r}}_P^2 + \frac{1}{2}I_\mathrm{CM}\dot{\theta}^2.
+    \]
+
+    Here, $v_P$ is the velocity of point $P$.
+    Note that the angular velocity of the pole about its CoM is the same as its angular velocity about the axle, $\dot{\theta}$.
+
+    Now, we have
+
+    \begin{gather*}
+        \va{r}_P = \vu{x}(x + L\sin(\theta)) - \vu{y}\cos(\theta)\\
+        \implies \dot{\va{r}}_P = \vu{x}(\dot{x} + L\cos(\theta)\dot{\theta}) + \vu{y}L\sin(\theta)\dot{\theta}\\
+        \implies \dot{\va{r}}_P^2 = \dot{x}^2 + 2\dot{x}\dot{\theta}L\cos(\theta) + L^2\dot{\theta}^2\\
+        \implies T = \frac{1}{2}(M + m)\dot{x}^2 + mL\cos(\theta)\dot{x}\dot{\theta} + \frac{1}{2}(I_\mathrm{CM} + mL^2)\dot{\theta}^2.
+    \end{gather*}
+
+    We can then recognize $I \equiv I_\mathrm{CM} + mL^2$ as the pole's moment of inertia about the axle (via the parallel axis theorem).
+
+    For the potential energy, we have
+
+    \[
+        U = mgL(1 - \cos(\theta)),
+    \]
+
+    if we choose $U(\theta = 0) = 0$.
+    So
+
+    \[
+        \Lag = T - U = \frac{1}{2}(M + m)\dot{x}^2 + mL\cos(\theta)\dot{x}\dot{\theta} + \frac{1}{2}I\dot{\theta}^2 + mgL(\cos(\theta) - 1).
+    \]
+
+    With coordinates $\va{q} = (x, \theta)$, the Euler-Lagrange equation $(\dv*{t})\grad_{\dot{\va{q}}}\Lag = \grad_{\va{q}}\Lag$ gives
+
+    \begin{gather*}
+        \dv{t}\pdv{\Lag}{\dot{x}} = \pdv{\Lag}{x} \implies (M + m)\ddot{x} + mL(\cos(\theta)\ddot{\theta} - \sin(\theta)\dot{\theta}^2) = 0\\
+        \dv{t}\pdv{\Lag}{\dot{\theta}} = \pdv{\Lag}{\theta} \implies mL(\cos(\theta)\ddot{x} - \cancel{\sin(\theta)\dot{x}\dot{\theta}}) + I\ddot{\theta} = -\cancel{mL\sin(\theta)\dot{x}\dot{\theta}} - mgL\sin(\theta).
+    \end{gather*}
+
+    We must also account for the horizontal control force $\va{F} = \vu{x}u$ applied to the cart, which makes the system non-conservative.
+    To do this, we interpret $\pdv*{\Lag}{\dot{x}}$ as the generalized momentum for coordinate $x$.
+    We may then simply add $u$ as a term to $(\dv*{t})\pdv*{\Lag}{\dot{x}}$:
+
+    \[
+        (M + m)\ddot{x} + mL(\cos(\theta)\ddot{\theta} - \sin(\theta)\dot{\theta}^2) = u.
+    \]
+
+    Solving for $\ddot{x}$ and $\ddot{\theta}$, we have (in manipulator form)
+
+    \begin{gather*}
+        \ddot{\va{q}} = \vb{H}^{-1}(\va{q})[\va{U} - \vb{C}(\va{q}, \dot{\va{q}})\dot{\va{q}} - \va{G}(\va{q})]\\
+        \text{where} \qquad \begin{aligned}[t]
+                \qquad \vb{H}(\va{q}) &\equiv \mqty[M + m & mL\cos(\theta) \\ mL\cos(\theta) & I] ,& \vb{C}(\va{q}, \dot{\va{q}}) &\equiv \mqty[0 & -mL\sin(\theta)\dot{\theta} \\ 0 & 0] ,\\
+            \va{G}(\va{q}) &\equiv \mqty[0 \\ mgL\sin(\theta)] ,\qq{and}& \va{U} &\equiv \mqty[u\\0]
+        \end{aligned}\\
+        \implies \mqty[\ddot{x} \\ \ddot{\theta}] = \frac{1}{(M + m)I - (mL\cos(\theta))^2}\mqty[mL\sin(\theta)[mgL\cos(\theta) + I\dot{\theta}^2] + Iu \\ -mL[mL\sin(\theta)\cos(\theta)\dot{\theta}^2 + (M + m)g\sin(\theta) + u\cos(\theta)]].
+    \end{gather*}
+
+    \section{Linear-Quadratic Regulator for Balance Control}
+
+    To develop a linear-quadratic regulator for balance control, we first need to linearize the equation of motion about the unstable equilibrium.
+    We seek a linearized equation of the form
+
+    \[
+        \dot{\va{s}} = \vb{A}(\va{s} - \va{s}^*) + \vb{B}(\va{u} - \va{u}^*) ,\qq{where} \va{s} = \mqty[\va{q} \\ \dot{\va{q}}] \equiv \mqty[x \\ \theta \\ \dot{x} \\ \dot{\theta}] \qc \va{u} = \mqty[\va{0} \\ \va{U}] = \mqty[0 \\ 0 \\ u \\ 0]
+    \]
+
+    is the control, $\va{s}^* = \mqty[\text{any} & \pi & 0 & 0]^T$ is the unstable equilibrium that we want to balance at, and $\va{u}^* = \mqty[0 & 0 & 0 & 0]^T$ indicates that no control should be applied when the system is exactly at the unstable equilibrium in phase space.
+    The matrices $\vb{A}$ and $\vb{B}$ can be computed by writing our equation of motion in the form $\dot{\va{s}} = \va{f}(\va{s}, \va{u})$ and linearizing about the unstable equilibrium via the evaluated Jacobians
+
+    \[
+        \vb{A} = \eval{\pdv{\dot{\va{s}}}{\va{s}}}_{\va{s}^*, \va{u}^*} \qq{and} \vb{B} = \eval{\pdv{\dot{\va{s}}}{\va{u}}}_{\va{s}^*, \va{u}^*}.
+    \]
+
+    For clarity, since different authors define and notate Jacobians differently, we require
+
+    \[
+        A_{ij} = \eval{\pdv{\dot{s}_i}{s_j}}_{\va{s}^*, \va{u}^*} \qq{and} B_{ij} = \eval{\pdv{\dot{s}_i}{u_j}}_{\va{s}^*, \va{u}^*}.
+    \]
+
+    Now, the equation of motion is (in block form)
+
+    \[
+        \dot{\va{s}} = \mqty[\dot{\va{q}} \\ \vb{H}^{-1}(\va{q})[\va{U} - \vb{C}(\va{q}, \dot{\va{q}})\dot{\va{q}} - \va{G}(\va{q})]]
+    \]
+
+    The top two components of $\dot{\va{s}}$ are trivial since they are already linear:
+
+    \[
+        \mqty[\dot{\va{q}} \\ 0] = \mqty[\vb{0} & \vb{I} \\ \vb{0} & \vb{0}]\va{s}.
+    \]
+
+    For the bottom two rows of $\vb{A}$ ($i \in \{3, 4\}$), we have
+
+    \[
+        A_{ij} = \eval{\pdv{s_j}(\vb{H}^{-1}(\va{q})[\va{U} - \vb{C}(\va{q}, \dot{\va{q}})\dot{\va{q}} - \va{G}(\va{q})])_i}_{\va{s}^*, \va{u}^*}.
+    \]
+
+    This looks unpleasant, but it simplifies quite a bit:
+
+    \begin{itemize}
+        \item The term involving a derivative of $\vb{H}^{-1}$ vanishes since $[\vb{U} - \vb{C}\dot{\va{q}} - \va{G}] = \ddot{\va{q}} = \va{0}$ at the equilibrium.
+
+        \item $\vb{U}$ has no $s_j$ dependence.
+
+        \item The term involving a derivative of $\vb{C}$ vanishes since $\dot{\va{q}} = 0$ at the equilibrium.
+
+        \item The term involving a derivative of $\dot{\va{q}}$ vanishes since $\vb{C} = \vb{0}$ at the equilibrium.
+
+        \item The term involving a derivative of $\va{G}$ vanishes if $j \in \{3, 4\}$ since $\va{G}$ has no dependence on the components of $\dot{\va{q}}$.
+    \end{itemize}
+
+    So (in block notation)
+
+    \[
+        \vb{A} = \eval{\mqty[\vb{0} & \vb{I} \\ -\vb{H}^{-1}\pdv*{\va{G}}{\va{q}} & \vb{0}]}_{\va{s}^*, \va{u}^*}.
+    \]
+
+    For the bottom two rows of $\vb{B}$ ($i \in \{3, 4\}$), we have
+
+    \[
+        B_{ij} = \eval{\pdv{u_j}(\vb{H}^{-1}(\va{q})[\va{U} - \vb{C}(\va{q}, \dot{\va{q}})\dot{\va{q}} - \va{G}(\va{q})])_i}_{\va{s}^*, \va{u}^*}.
+    \]
+
+    Since $\va{u} = \mqty[0 & 0 & u & 0]^T$, only the $j = 3$ elements survive.
+    But since $\vb{U} = \mqty[u & 0]^T$,
+
+    \[
+        B_{(\text{bottom})3} = \eval{\vb{H}^{-1}\mqty[1 \\ 0]}_{\va{s}^*, \va{u}^*}.
+    \]
+
+    So (in block notation)
+
+    \[
+        \vb{B} = \eval{\mqty[0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & (\vb{H}^{-1})_{11} & 0 \\ 0 & 0 & (\vb{H}^{-1})_{12} & 0]}_{\va{s}^*, \va{u}^*}.
+    \]
+
+    Plugging in, we have
+
+    \begin{gather*}
+        \vb{A} = \mqty[\vb{0} & \vb{I} \\ \vb*{\mathcal{A}} & \vb{0}] \qq{and} \vb{B} = \mqty[\vb{0} & \vb{0} \\ \vb{0} & \vb*{\mathcal{B}}]\\
+        \text{where} \qquad \vb*{\mathcal{A}} \equiv \frac{mgL}{(M + m)I - (mL)^2}\mqty[0 & mL \\ 0 & M + m] \qq{and} \vb*{\mathcal{B}} \equiv \frac{1}{(M + m)I - (mL)^2}\mqty[I & 0 \\ mL & 0].
+    \end{gather*}
+
+    Now, an infinite-horizon, continuous-time LQR minimizes the quadratic loss function
+
+    \[
+        J = \int_0^\infty \dd{t} \qty[(\va{s} - \va{s}^*)^T\vb{Q}(\va{s} - \va{s}^*) + (\va{u} - \va{u}^*)^T\vb{R}(\va{u} - \va{u}^*) + 2(\va{s} - \va{s}^*)^T\vb{N}(\va{u} - \va{u}^*)]
+    \]
+
+    via a linear feedback control law $\va{u} = -\vb{K}(\va{s} - \va{s}^*)$.
+    The optimal feedback matrix $\vb{K}$ is given by some complicated linear algebra that we will not derive here, but I highly recommend reading through a derivation yourself, as there are some neat lemmas used.
+
+    Now, we need to pick some matrices $\vb{Q}$ $\vb{R}$, and $\vb{N}$ for our loss function.
+    Note that due to the form of $\va{u}$, the only element of $\vb{R}$ that actually affects our loss function is $R_{33}$, so we only have one scalar to choose for $\vb{R}$.
+    Similarly, due to the form of $\va{u}$, only $\vb{N}$ four components of $\vb{N}$ matter.
+
+    The effect of positive $R_{33}$ is to penalize excessive control.
+    Intuitively, we might expect such a penalty to push the controller to be more conservative and less prone to overshooting the equilibrium.
+
+    For $\vb{Q}$, a good choice is a diagonal matrix, so that our quadratic form in $\va{s} - \va{s}^*$ does not contain cross terms.
+    In most cases a diagonal $\vb{Q}$ will be perfectly sufficient, though the relative weights may take some tuning.
+    While we could also introduce nonzero weights to off-diagonal cross terms in the quadratic form, it turns out that in practice, doing so is typically unnecessary and serves only to complicate the process of tuning weights.
+
+    For getting a good controller, it is also perfectly sufficient to entirely neglect $\vb{N}$, giving no weights to cross terms between $u$ and components of the state vector.
+\end{document}

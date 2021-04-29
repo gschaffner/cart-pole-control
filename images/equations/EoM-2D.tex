@@ -1,0 +1,21 @@
+\documentclass[
+    crop,
+    margin=0.05in,
+    convert={density=150}
+]{standalone}
+
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath, amssymb, mathtools}
+\usepackage[arrowdel]{physics}
+
+\begin{document}
+    $\displaystyle\begin{gathered}
+        \ddot{\va{q}} = \vb{H}^{-1}(\va{q})[\va{U} - \vb{C}(\va{q}, \dot{\va{q}})\dot{\va{q}} - \va{G}(\va{q})]\\
+        \text{where} \qquad \begin{aligned}[t]
+            \va{q} &\equiv \mqty[x \\ \theta] ,& \va{U} &\equiv \mqty[u\\0]\\
+            \vb{H}(\va{q}) &\equiv \mqty[M + m & mL\cos(\theta) \\ mL\cos(\theta) & I] ,& \vb{C}(\va{q}, \dot{\va{q}}) &\equiv \mqty[0 & -mL\sin(\theta)\dot{\theta} \\ 0 & 0],\\
+            \va{G}(\va{q}) &\equiv \mqty[0 \\ mgL\sin(\theta)].
+        \end{aligned}
+    \end{gathered}$
+\end{document}

@@ -1,0 +1,16 @@
+\documentclass[
+    crop,
+    margin=0.05in,
+    convert={density=150}
+]{standalone}
+
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath, amssymb, mathtools}
+\usepackage[arrowdel]{physics}
+
+\begin{document}
+    $\displaystyle
+        \dot{\va{s}} = \mqty[\dot{\va{q}} \\ \ddot{\va{q}}] = \mqty[\dot{\va{q}} \\ \vb{H}^{-1}(\va{q})[\va{U} - \vb{C}(\va{q}, \dot{\va{q}})\dot{\va{q}} - \va{G}(\va{q})]].
+    $
+\end{document}

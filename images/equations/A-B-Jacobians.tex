@@ -1,0 +1,19 @@
+\documentclass[
+    crop,
+    margin=0.05in,
+    convert={density=150}
+]{standalone}
+
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath, amssymb, mathtools}
+\usepackage[arrowdel]{physics}
+
+\begin{document}
+    $\displaystyle
+        \begin{gathered}
+            \vb{A} = \eval{\pdv{\dot{\va{s}}}{\va{s}}}_{\va{s}^*, \va{u}^*} \qq{and} \vb{B} = \eval{\pdv{\dot{\va{s}}}{\va{u}}}_{\va{s}^*, \va{u}^*}\\
+            \text{where} \qquad \va{s}^* = \mqty[\text{center of track} \\ \pi \\ 0 \\ 0] \qc \va{u} \equiv \mqty[\va{0} \\ \va{U}] = \mqty[0 \\ 0 \\ u \\ 0] \qq{and} \va{u}^* = \mqty[0 \\ 0 \\ 0 \\ 0],
+        \end{gathered}
+    $
+\end{document}
